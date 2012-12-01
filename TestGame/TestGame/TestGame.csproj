@@ -109,9 +109,11 @@
   <ItemGroup>
     <Compile Include="Game1.cs" />
     <Compile Include="Menus\MainMenu.cs" />
+    <Compile Include="PathFinder\Pathfinder.cs" />
     <Compile Include="Scenes\PlaygroundScene.cs" />
     <Compile Include="Sprite\ComputerAI.cs" />
     <Compile Include="Sprite\Human.cs" />
+    <Compile Include="Sprite\Poop.cs" />
     <Compile Include="Sprite\SpriteManager.cs" />
     <Compile Include="Unused\Element.cs" />
     <Compile Include="SM\Scene.cs" />

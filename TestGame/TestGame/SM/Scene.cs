@@ -12,7 +12,7 @@ using System.Collections;
 
 namespace TestGame
 {
-   abstract class Scene 
+   public abstract class Scene 
     {
         public int height;
         public int width;
@@ -50,6 +50,9 @@ namespace TestGame
             _graphicsDevice = gd;
         }
 
+       public virtual void UnloadContent()
+       {
+       }
         public virtual void Draw(GameTime gametime)
         {
         }
@@ -57,8 +60,6 @@ namespace TestGame
         public virtual void Update(GameTime gametime)
         {
         }
-
-        
 
     }
 }

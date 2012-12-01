@@ -15,40 +15,31 @@ namespace TestGame
 {
     class Human : Sprite
     {
+        SceneManager sceneManager;
+        Poop poop;
+        
         public Human(Texture2D image, Point playerFrameSize, Vector2 position, Vector2 velocity, 
-            int collisionOffset, int type, int[,] movedata) 
-            : base(image, playerFrameSize, position, velocity, collisionOffset, type, movedata)
-        { }
-
-  /*      public override Vector2 Direction
+            int collisionOffset, int type, int[,] movedata, SceneManager sm, Poop p)
         {
-            get {
-                Vector2 inputDirection = Vector2.Zero;
+            this.image = image;
+            this.playerFrameSize = playerFrameSize;
+            this.position = position;
+            this.velocity = velocity;
+            this.collisionOffset = collisionOffset;
+            this.type = type;
+            this.movedata = movedata;
+            sceneManager = sm;
+            poop = p;
+            status = State.Waiting;
+        }
 
-                if (Keyboard.GetState().IsKeyDown(Keys.Left))
-                    inputDirection.X -= 4;
-                if (Keyboard.GetState().IsKeyDown(Keys.Right))
-                    inputDirection.X += 4;
-                if (Keyboard.GetState().IsKeyDown(Keys.Up))
-                    inputDirection.Y -= 4;
-                if (Keyboard.GetState().IsKeyDown(Keys.Down))
-                    inputDirection.Y += 4;
-
-                return inputDirection * speed;
-            }
-        } */
-
-        public virtual void Update(GameTime gametime)
+        public override void Update(GameTime gametime)
         {
-            //Console.WriteLine(position.X / (16 * 3));
-            //Console.WriteLine(movedata[(int)(position.Y/48 % 16), (int)(position.X/48 % 16)]);
             var newState = Keyboard.GetState();
             timer += (float)gametime.ElapsedGameTime.TotalMilliseconds;
-            Console.WriteLine(status);
+            //Console.WriteLine(status);
             switch (status)
             {
-                //(movedata[(int)(((position.Y + 48) / 48) % 16), (int)((position.X / 48) % 16)] == 0)
-
                 case State.Waiting:
                     {
                         if (newState.IsKeyDown(Keys.Right))
@@ -234,6 +225,17 @@ namespace TestGame
                     }
             }
             oldState = newState;
+          
+            
+            if (position.X == 624 && position.Y == 144)
+            {
+                sceneManager.removeScene(sceneManager.getScene());
+                position = new Vector2(32 * 3, 32 * 3);
+            }
+
+            //if (newState.IsKeyDown(Keys.A))
+              //  poop.Draw(position);
+             
         }
     }
 }

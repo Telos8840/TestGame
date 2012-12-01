@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using System.Collections.Generic;
 
 using System.Diagnostics;
 
@@ -18,78 +19,78 @@ namespace TestGame
         SpriteBatch spriteBatch;
         GraphicsDevice graphicsDevice;
         ContentManager contentManager;
-        SceneManager sceneManager;
-        Human player;
-        ComputerAI enemy;
-        public int[,] movedata;
+        //sprite list is your list of sprites
+        ArrayList spriteList = new ArrayList();
 
-        public SpriteManager(ContentManager cm, GraphicsDevice gd, SpriteBatch sb, int [,] md)
+        public SpriteManager(SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, ContentManager contentManager)
         {
-            contentManager = cm;
-            graphicsDevice = gd;
-            spriteBatch = sb;
-            movedata = md;
+            //these are passed to u from playground
+            this.spriteBatch = spriteBatch;
+            this.graphicsDevice = graphicsDevice;
+            this.contentManager = contentManager;
         }
 
-        public void LoadContent()
-        {
-            spriteBatch = new SpriteBatch(graphicsDevice);
+        public void AddSprite(Sprite newSprite){
+            spriteList.Add(newSprite);
+        }
 
-            spriteBatch = new SpriteBatch(graphicsDevice);
+        public void RemoveSprite(Sprite oldSprite)
+        {
+            spriteList.Remove(oldSprite);
+        }
+
+        protected void LoadContent()
+        {
+            /*
             player = new Human(
                 contentManager.Load<Texture2D>(@"Sprites/player"),
                 new Point(42, 42),
                 new Vector2(32 * 3, 32 * 3),
                 Vector2.Zero,
-                10, 0, movedata);
+                10, 0, scene.MoveData);
 
             enemy = new ComputerAI(
                 contentManager.Load<Texture2D>(@"Sprites/player"),
                 new Point(42, 42),
                 new Vector2(60 * 3, 60 * 3),
                 Vector2.Zero,
-                10, 0, movedata);
+                10, 0, scene.MoveData);
             //enemy.SetWaypoints(scene.Waypoints);
 
             //base.LoadContent();
+            */
         }
 
-        /// <summary>
-        /// Allows the game component to perform any initialization it needs to before starting
-        /// to run.  This is where it can query for any required services and load content.
-        /// </summary>
-        public override void Initialize()
+        public void Update(GameTime gameTime)
         {
-            // TODO: Add your initialization code here
+            //you need to loop through all your sprite objects and update them.
+            //Boundary Detection Arraylist
+            ArrayList boundsList = new ArrayList();
+            foreach (Sprite s in spriteList)
+            {
+                s.Update(gameTime);
+                boundsList.Add(s.collisionRect);
 
-            //base.Initialize();
+            }
+            //this is how you check collision against all other possible sprites
+            foreach (Rectangle r in boundsList)
+            {
+                foreach (Rectangle t in boundsList)
+                {
+                    if (r.Intersects(t) && r != t)
+                    {
+                        Debug.WriteLine("COLLISION!!!!!!!!!!!!!!!!!");
+                    }
+                }
+            }
         }
 
-        /// <summary>
-        /// Allows the game component to update itself.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
-        public override void Update(GameTime gameTime)
+        public void Draw(GameTime gameTime)
         {
-            player.Update(gameTime);
-            enemy.Update(gameTime);
-
-            if (enemy.collisionRect.Intersects(player.collisionRect))
-                Debug.WriteLine("COLLISION!!!!!!!!!!!!!!!!!");
-
-            //base.Update(gameTime);
-        }
-
-        public override void Draw(GameTime gameTime)
-        {
-            spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend);
-
-            player.Draw(gameTime, spriteBatch);
-            enemy.Draw(gameTime, spriteBatch);
-
-            spriteBatch.End();
-
-           // base.Draw(gameTime);
+            foreach (Sprite s in spriteList)
+            {
+                s.Draw(gameTime,spriteBatch);
+            }
         }
     }
 }

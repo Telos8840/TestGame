@@ -11,9 +11,10 @@ using Microsoft.Xna.Framework.Media;
 
 namespace TestGame
 {
-    class SceneManager
+    public class SceneManager
     {
        //Refferes to the current Scene 
+       public bool exit = false;
        private Scene _currentScene;
        public Scene currentScene
        {
@@ -67,6 +68,16 @@ namespace TestGame
             {
                 _currentScene = (Scene)sceneStack[sceneStack.Count - 1];
             }
+        }
+
+        public Scene getScene()
+        {
+            return currentScene;
+        }
+
+        public void UnloadContent()
+        {
+            currentScene.UnloadContent();
         }
 
         public void Update(GameTime gametime)

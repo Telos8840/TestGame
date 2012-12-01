@@ -12,12 +12,12 @@ using Microsoft.Xna.Framework.Media;
 
 namespace TestGame
 {
-    abstract class Sprite
+    public abstract class Sprite
     {
         public Vector2 position;
         protected GraphicsDevice graphicsDevice;
         protected ContentManager contentManager;
-        //protected SpriteBatch spriteBatch;
+        protected SpriteBatch spriteBatch;
         protected Texture2D image;
         protected KeyboardState oldState;
         protected int curFrame = 0;
@@ -31,7 +31,7 @@ namespace TestGame
         protected Point playerFrameSize;
         protected Vector2 velocity;
         protected int collisionOffset;
-        //Texture2D line;
+        protected SceneManager sceneManager;
 
         protected enum State
         {
@@ -42,26 +42,24 @@ namespace TestGame
             MoveDown
         }
 
+        public Sprite()
+        {
+        }
+
         public Sprite(int x, int y, int type, ContentManager cm, GraphicsDevice gd, int [,] movedata)
         {
             this.movedata = movedata;
             position = new Vector2(x, y);
             contentManager = cm;
             graphicsDevice = gd;
+            status = State.Waiting;
+
             //Initialize();
             //LoadContent();
-            status = State.Waiting;
         }
 
-        /*
-        public Sprite(Texture2D player1, Point playerFrameSize, Vector2 playerPosition, Vector2 velocity,
-            int collisionOffset, int curFrame, int direction, float timer, bool walking, bool keepmoving)
-            : this(player1, playerFrameSize,
-                playerPosition, velocity, collisionOffset, curFrame, direction, timer, walking, keepmoving, defaultMSPerFrame)
-        { }
-        */
         public Sprite(Texture2D image, Point playerFrameSize, Vector2 position, Vector2 velocity, 
-            int collisionOffset, int type, int[,] movedata)
+            int collisionOffset, int type, int[,] movedata, SceneManager sm)
         {
             this.image = image;
             this.playerFrameSize = playerFrameSize;
@@ -70,54 +68,45 @@ namespace TestGame
             this.collisionOffset = collisionOffset;
             this.type = type;
             this.movedata = movedata;
+            sceneManager = sm;
             //Initialize();
             //LoadContent();
             status = State.Waiting;
         }
-/*
-        public void Initialize()
-        {
-            spriteBatch = new SpriteBatch(graphicsDevice);
-        }
-        /*
-        public void LoadContent()
-        {
-            image = contentManager.Load<Texture2D>(@"Sprites/player");
-        }
-        */
+
         public virtual void Draw(GameTime gametime, SpriteBatch spriteBatch)
         {
-            //spriteBatch.Begin();
+            spriteBatch.Begin();
             spriteBatch.Draw(image, position, new Rectangle(curFrame * 32 / 2, direction * 40 / 2, 16, 39 / 2), Color.White, 0, Vector2.Zero, new Vector2(3f, 2.461538461538461538f), SpriteEffects.None, 0);
-            //spriteBatch.End();
+            spriteBatch.End();
         }
 
         public virtual void Update(GameTime gametime)
         {
             //Console.WriteLine(position.X / (16 * 3));
             //Console.WriteLine(movedata[(int)(position.Y/48 % 16), (int)(position.X/48 % 16)]);
-            var newState = Keyboard.GetState();
+            //var newState = Keyboard.GetState();
             timer += (float)gametime.ElapsedGameTime.TotalMilliseconds;
-            Console.WriteLine(status);
+            //Console.WriteLine(status);
             switch (status)
             {
                 //(movedata[(int)(((position.Y + 48) / 48) % 16), (int)((position.X / 48) % 16)] == 0)
                 
                 case State.Waiting:
                     {
-                        if (newState.IsKeyDown(Keys.Right))
+                        if (direction == 2)
                         {
                             status = State.MoveRight;
                         }
-                        else if (newState.IsKeyDown(Keys.Left))
+                        else if (direction == 1)
                         {
                             status = State.MoveLeft;
                         }
-                        else if (newState.IsKeyDown(Keys.Up))
+                        else if (direction == 3)
                         {
                             status = State.MoveUp;
                         }
-                        else if (newState.IsKeyDown(Keys.Down))
+                        else if (direction == 0)
                         {
                             status = State.MoveDown;
                         }
@@ -162,6 +151,7 @@ namespace TestGame
                             direction = 2;
                             walking = true;
                             keepmoving = true;
+                            
                         }
                         break;
                     }
@@ -189,7 +179,8 @@ namespace TestGame
                                     status = State.Waiting;
                                 }
                             }
-                            else{
+                            else
+                            {
                                 keepmoving = false;
                                 walking = false;
                                 status = State.Waiting;
@@ -286,7 +277,8 @@ namespace TestGame
                         break;
                     }
             }
-            oldState = newState;
+            //oldState = newState;
+            
         }
 
         public Rectangle collisionRect
